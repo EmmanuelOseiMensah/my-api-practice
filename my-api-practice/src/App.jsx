@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CityInput from "./components/CityInput";
+import "./index.css";
 
 function App() {
   const [city, setCity] = useState("");
@@ -22,10 +23,7 @@ function App() {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
 
       const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error("City not found");
-      }
+      if (!response.ok) throw new Error("City not found");
 
       const data = await response.json();
       setWeather(data);
@@ -37,26 +35,62 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>🌤 Weather App</h1>
+    <div className="min-h-screen .bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          🌤 Weather App
+        </h1>
 
-      <CityInput
-        city={city}
-        setCity={setCity}
-        onSearch={fetchWeatherData}
-      />
+        <CityInput
+          city={city}
+          setCity={setCity}
+          onSearch={fetchWeatherData}
+        />
 
-      {loading && <p>Loading weather...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {loading && (
+          <p className="text-center text-gray-500 mt-4">
+            Fetching weather...
+          </p>
+        )}
 
-      {weather && (
-        <div>
-          <h2>{weather.name}</h2>
-          <p>🌡 Temperature: {weather.main.temp}°C</p>
-          <p>☁ Condition: {weather.weather[0].description}</p>
-          <p>💨 Wind Speed: {weather.wind.speed} m/s</p>
-        </div>
-      )}
+        {error && (
+          <p className="text-center text-red-500 mt-4">
+            {error}
+          </p>
+        )}
+
+        {weather && (
+          <div className="mt-6 text-center">
+            <h2 className="text-xl font-semibold text-gray-700">
+              {weather.name}
+            </h2>
+
+            <p className="text-6xl font-bold text-blue-500 my-4">
+              {Math.round(weather.main.temp)}°
+            </p>
+
+            <p className="capitalize text-gray-600">
+              {weather.weather[0].description}
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-blue-50 rounded-lg p-3">
+                <p className="text-gray-500">Humidity</p>
+                <p className="font-semibold">
+                  {weather.main.humidity}%
+                </p>
+              </div>
+
+              <div className="bg-blue-50 rounded-lg p-3">
+                <p className="text-gray-500">Wind</p>
+                <p className="font-semibold">
+                  {weather.wind.speed} m/s
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
